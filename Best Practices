@@ -1,0 +1,43 @@
+Best Practices
+
+Data Requirements
+
+Use HGNC gene symbols compatible with the STRING database.
+
+Protein abundances should be appropriately normalized (e.g., z-scored) prior to analysis.
+
+Missing values should be minimal and imputed prior to running the pipeline.
+
+Proteins should be collapsed to unique identifiers (one column per protein).
+
+The measured proteome should be sufficiently large to generate a PPI network of adequate size and density for meaningful set construction.
+
+Input Matrix Format (.csv)
+
+Rows represent subjects and columns represent the outcome variable followed by protein measurements.
+
+Example:
+
+SubjectID  Outcome  APOA1  APOB  CLTA  STX5
+S1         0.78     0.52   -1.23 0.88  -0.31
+S2        -0.34     0.61   -1.12 0.74  -0.44
+
+Script Notes
+
+The parameter settings and thresholds used in this pipeline were optimized for the dataset analyzed in the original NIRRA study. Users applying the method to different datasets may need to adjust parameters accordingly.
+
+The regression stage of the pipeline is computationally intensive. For example, evaluating ~100,000 unique protein sets may require several hours to complete depending on hardware and dataset size.
+
+Recommended Hardware
+
+Minimum recommended system specifications:
+
+CPU: ≥8 cores
+
+RAM: ≥16 GB
+
+Disk: ≥10 GB free space
+
+Approximate runtime:
+
+~2–3 hours on a MacBook Pro (Apple M3 Pro, 18 GB RAM) when evaluating ~100,000 candidate protein sets.
