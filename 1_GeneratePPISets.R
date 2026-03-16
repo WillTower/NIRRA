@@ -25,7 +25,7 @@ suppressPackageStartupMessages({
 # ==========================================================
 # 1. Paths and parameters
 # ==========================================================
-in_file <- "~/path/to/inputmatrix"
+in_file <- "~/path/to/inputmatrix.csv"
 out_dir <- "~/path/to/output"
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
