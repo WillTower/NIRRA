@@ -1,0 +1,71 @@
+© 2026 William Tower
+
+This document describes the NIRRA pipeline included in this repository.
+The software implementation is distributed under the Apache License 2.0.
+See the LICENSE file for details.
+
+## NIRRA Pipeline
+
+### Step 1: Construction and Sampling of the STRING Protein–Protein Interaction Network
+
+A protein–protein interaction (PPI) network was constructed for the measured proteome using the STRING database. Interactions were filtered using a **confidence threshold of 600**, corresponding to a medium–high confidence level. This threshold was selected to balance network coverage with interaction reliability, providing sufficient connectivity while minimizing spurious links between unrelated proteins. Interactions derived from STRING **text mining evidence were excluded**.
+
+We then sampled this network to generate candidate protein sets. Each protein in the measured proteome was treated as a potential **hub**, and interacting neighbors were sampled to construct sets of size **2–6 proteins**. For each hub, **10 replicate sets were sampled at each set size**, ensuring that all resulting sets were unique. You may increase the number of replicates for better network coverage and increased total set count.
+
+In our dataset, the probability of generating successfully connected sets exhibited a **local maximum at set size = 4** when using a STRING confidence threshold of 600. Sampling sizes **2–6** therefore captures the region surrounding this empirical optimum while allowing both smaller and larger interaction configurations to be evaluated. 
+
+---
+
+### Step 2: Ridge Regression Modeling
+
+Each candidate protein set was evaluated using ridge regression to predict the outcome variable (cognition). Ridge regression is well suited for proteomic data because proteins frequently exhibit **strong correlations due to shared biological pathways**. Unlike variable selection methods, ridge regression distributes model weight across correlated predictors, capturing the **collective signal of coordinated biological processes** rather than selecting individual markers.
+
+Ridge achieves this by introducing an L2 penalty on model coefficients, which discourages large weights and stabilizes estimates when predictors are correlated.
+
+For each protein set, we fit both **unconstrained ridge models** and **sign-constrained ridge models**. Ridge regression can occasionally produce coefficient sign reversals due to multicollinearity among predictors. Running both unconstrained and sign-constrained models allows the pipeline to capture both:
+
+* **intra-set antagonistic relationships** (proteins with opposing associations)
+* **set-wide additive relationships** (proteins acting in concert)
+
+---
+
+### Step 3: Clustering Sets into Modules
+
+Protein sets were grouped into higher-level modules based on **pairwise Jaccard similarity**, defined as the intersection divided by the union of proteins between sets. This metric quantifies overlap in protein composition between candidate sets.
+
+The resulting similarity graph was clustered using the **Leiden community detection algorithm**, which identifies densely connected groups of sets representing related biological configurations.
+
+---
+
+### Step 4: Module Ranking
+
+Modules were ranked based on both the **prevalence** and **predictive strength** of their most informative configurations. Specifically, we calculated the geometric mean of:
+
+* the number of sets within the **global 99th percentile (p99)** of model (R^2), and
+* the **median (R^2)** of those high-performing sets.
+
+This metric captures the **predictive mass** of each module, prioritizing modules that contain many highly predictive configurations rather than isolated high-performing sets.
+
+---
+
+### Step 5: Motif Decomposition and Hierarchical Empirical Bayes Stabilization of Motif Predictiveness (R^2)
+
+Protein sets were decomposed into **signed protein pairs (motifs)**. Signed pairs represent the largest unit of interaction information that is consistently available across sets of sizes 2–6.
+
+Motif signs were determined from ridge regression coefficients within each set. Ridge coefficients are inherently conditional on the other proteins present in the model and therefore may be noisy. However, **relative sign relationships between protein pairs are more stable**, particularly for highly predictive configurations. Motifs are constructed within modules to preserve a coherent biological background defined by sets with similar protein composition. However, motif predictive performance is evaluated globally across all carrier sets to allow direct comparison across modules.
+
+To improve robustness, two constraints were imposed:
+
+1. A protein was included in a motif only if it contributed at least **5% of the model’s total absolute ridge weight**, ensuring that weakly contributing proteins were excluded.
+
+2. Motifs were required to appear in **at least five independent carrier sets**. Motifs observed in fewer sets were considered too sparse to reliably estimate predictive performance.
+
+Motifs appear in different numbers of ridge regression sets due to the topology of the sampled PPI network. Motifs represented in only a small number of sets therefore have **noisy estimates of predictive performance**.
+
+To stabilize motif ranking, we applied **hierarchical empirical Bayes (HEB) shrinkage** to motif-level mean (R^2) estimates. This approach shrinks each motif’s observed mean (R^2) toward a global prior representing the average predictive ability across all motifs. Motifs supported by many carrier sets remain close to their observed mean, while sparsely represented motifs are shrunk more strongly toward the global mean.
+
+The resulting estimate provides a **variance-stabilized measure of motif predictiveness**, allowing motifs with different representation levels to be compared on a common scale.
+
+---
+
+The resulting framework enables the discovery of reproducible protein interactions that reflect coordinated biological states rather than isolated biomarkers, providing mechanistic insight into the network-level organization of proteomic signals associated with phenotype.
