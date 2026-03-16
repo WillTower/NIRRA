@@ -30,7 +30,7 @@ tol_beta <- 1e-4
 # ==========================================================
 # PATHS
 # ==========================================================
-in_file  <- "~/path/to/inputmatrix"
+in_file  <- "~/path/to/inputmatrix.csv"
 ppi_file <- "~/path/to/PPI_HighDensity_Collections_AllHubs.csv"
 out_dir  <- "~/path/to/output"
 
