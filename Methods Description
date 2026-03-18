@@ -18,7 +18,7 @@ In our dataset, the probability of generating successfully connected sets exhibi
 
 ### Step 2: Ridge Regression Modeling
 
-Each candidate protein set was evaluated using ridge regression to predict the outcome variable (cognition). Ridge regression is well suited for proteomic data because proteins frequently exhibit **strong correlations due to shared biological pathways**. Unlike variable selection methods, ridge regression distributes model weight across correlated predictors, capturing the **collective signal of coordinated biological processes** rather than selecting individual markers.
+Each candidate protein set was evaluated using ridge regression to predict the outcome variable. Ridge regression is well suited for proteomic data because proteins frequently exhibit **strong correlations due to shared biological pathways**. Unlike variable selection methods, ridge regression distributes model weight across correlated predictors, capturing the **collective signal of coordinated biological processes** rather than selecting individual markers.
 
 Ridge achieves this by introducing an L2 penalty on model coefficients, which discourages large weights and stabilizes estimates when predictors are correlated.
 
