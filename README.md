@@ -10,8 +10,7 @@ Tower, W. (2026)
 https://doi.org/10.5281/zenodo.19054547
 
 
-#Please find most recent version updates at https://github.com/ACTRU/NIRRA
-
+Please find most recent version updates at https://github.com/ACTRU/NIRRA
 
 
 NIRRA (Network-Informed Restricted-set Ridge Analysis) is a computational framework for discovering biologically meaningful predictive structure in high-dimensional proteomics data. The method leverages prior knowledge of protein–protein interaction networks (as defined by STRING) to construct restricted candidate protein sets that are evaluated using ridge regression models. Rather than treating proteins as independent predictors, NIRRA explicitly exploits network topology to identify coordinated protein groups whose combined states are associated with phenotypic outcomes. Predictive sets are subsequently clustered into higher-order modules and decomposed into signed protein interaction motifs, allowing the underlying biological structure of predictive signals to be interpreted. Hierarchical empirical Bayes (HEB) shrinkage is then used to stabilize motif effect estimates across sets with differing representation in the sampled network space. Together, these steps enable robust identification of biologically interpretable proteomic modules and motifs that capture coordinated molecular states associated with complex phenotypes.
